@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  djangoapp:
+    container_name: djangoapp
+    build:
+      context: .
+    ports:
+      - 8000:8000 #redireciona a porta 8000 do computador para a 8000 da imagem
+    volumes: #mapei os volumens
+      - ./djangoapp:/djangoapp #sincroniza a pasta com a pasta do conteiner
+      - ./data/web/static:/data/web/static/
+      - ./data/web/media:/data/web/media/
+    env_file:
+      - ./dotenv_files/.env
+    depends_on:
+      - psql
+  psql:
+    container_name: psql
+    image: postgres:latest
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data/
+    env_file:
+      - ./dotenv_files/.env
