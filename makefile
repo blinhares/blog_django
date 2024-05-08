@@ -6,3 +6,10 @@ run:
 
 run-silently:
 	sudo docker compose up -d
+
+remote-sh:
+	sudo docker compose up -d && docker exec -it djangoapp sh
+
+exit:
+	sudo docker compose down
+
