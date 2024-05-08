@@ -1,4 +1,4 @@
-version: '3.9'
+# version: '3.9'
 
 services:
   djangoapp:
@@ -17,7 +17,7 @@ services:
       - psql
   psql:
     container_name: psql
-    image: postgres:latest
+    image: postgres:16.2-alpine3.19
     volumes:
       - ./data/postgres/data:/var/lib/postgresql/data/
     env_file:
