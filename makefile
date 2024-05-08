@@ -10,6 +10,9 @@ run-silently:
 remote-sh:
 	sudo docker compose up -d && docker exec -it djangoapp sh
 
+get-permissions:
+	sudo chown bruno:bruno -R  djangoapp/
+
 exit:
 	sudo docker compose down
 
