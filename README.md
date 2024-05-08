@@ -79,3 +79,15 @@ docker compose run --rm djangoapp sh -c 'echo  ola'
 ```bash
 docker exec -it djangoapp sh
 ```
+
+## Como utilizar
+
+### Criar um super User
+
+Execute dentro do conteiner o seguinte comando:
+
+```bash
+python manage.py createsuperuser
+```
+
+Crie um super usuario para voce.
