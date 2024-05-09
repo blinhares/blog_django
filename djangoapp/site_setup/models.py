@@ -20,12 +20,20 @@ class MenuLink(models.Model):
         return self.text
     
 class SiteSetup(models.Model):
+    """Cria Tabelas com Dados a serem inseridos para a COnfiguracao do Site """
     class Meta:
         verbose_name = 'Setup'
         verbose_name_plural = 'Setup'
 
-    title = models.CharField(max_length=65)
-    description = models.CharField(max_length=255)
+    title = models.CharField(
+        max_length=65,
+        help_text="Titulo do Site com no máximo 65 caracteres.",
+        )
+    
+    description = models.CharField(
+        max_length=255,
+        help_text="Descricao do Site com no máximo 255 caracteres.",
+        )
 
     show_header = models.BooleanField(default=True)
     show_search = models.BooleanField(default=True)
@@ -33,6 +41,13 @@ class SiteSetup(models.Model):
     show_description = models.BooleanField(default=True)
     show_pagination = models.BooleanField(default=True)
     show_footer = models.BooleanField(default=True)
+
+    favicon = models.ImageField(
+        upload_to='assets/favicon/%Y/%m/',
+        blank=True,
+        default='',
+        help_text="Icone a ser exibido na abado navegador.",
+    )
 
     def __str__(self):
         return self.title
