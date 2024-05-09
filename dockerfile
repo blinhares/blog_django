@@ -37,7 +37,8 @@ RUN python -m venv /venv && \
   chown -R duser:duser /data/web/media && \
   chmod -R 755 /data/web/static && \
   chmod -R 755 /data/web/media && \
-  chmod -R +x /scripts 
+  chmod -R +x /scripts && \
+  su duser
 
 # Adiciona a pasta scripts e venv/bin 
 # no $PATH do container.
@@ -46,6 +47,7 @@ ENV PATH="/scripts:/venv/bin:$PATH"
 # Muda o usuário para duser
 #no linux isso pode dar erro nas permissoes do arquivo. 
 # Entao no nosso caso seguiremos no usuario root da imagem
+#mudamos o usuario com o comando `su duser`
 # USER duser 
 
 # Executa o arquivo scripts/commands.sh
