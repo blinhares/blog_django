@@ -1,4 +1,6 @@
 from django.db import models
+from utils.model_validator import validate_png
+from utils.images import resize_image
 
 class MenuLink(models.Model):
     class Meta:
@@ -46,8 +48,27 @@ class SiteSetup(models.Model):
         upload_to='assets/favicon/%Y/%m/',
         blank=True,
         default='',
+        validators=[validate_png],
         help_text="Icone a ser exibido na abado navegador.",
     )
+
+    def save(self, *args, **kwargs): # type: ignore
+        """
+        Sobrescreve o metodo Save do modelo herdado,
+        vrifica se o faviicon foi alterado e , em caso de que sim,
+        o favicon é redimensionado.
+
+        """
+        favicon_changed = False
+        current_favicon_name = str(self.favicon.name)
+        super().save(*args, **kwargs) # type: ignore
+
+        if self.favicon:
+            #verifica que o favicon foi alterado
+            favicon_changed = current_favicon_name != self.favicon.name
+
+        if favicon_changed:
+            resize_image(self.favicon, 32)
 
     def __str__(self):
         return self.title
