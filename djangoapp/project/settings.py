@@ -75,6 +75,7 @@ TEMPLATES = [ # type: ignore
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'site_setup.context_processors.site_setup',#carregado do app para ser acessado de todos os lugares
             ],
         },
     },
