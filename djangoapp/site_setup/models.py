@@ -1,6 +1,6 @@
 from django.db import models
 from utils.model_validator import validate_png
-from utils.images import resize_image
+from utils.images import resize_image # type: ignore
 
 class MenuLink(models.Model):
     class Meta:
@@ -16,6 +16,7 @@ class MenuLink(models.Model):
         blank=True,#permite valores em branco
         null=True,#permite valores nulos
         default=None,
+        related_name='menu',
 
     )
     def __str__(self):
