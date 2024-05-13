@@ -1,14 +1,29 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from blog.models import Post
+from utils.log import log
 
-posts = list(range(1000))
+l = log(__name__)
 
+PER_PAGE = 9
 # Create your views here.
 def index(request:HttpRequest)->HttpResponse:
-    paginator = Paginator(posts, 9)
+    """
+    View Criado para Pagina de Index.
+    """
+    l.debug('Coletando dados do Model Post')
+    posts = Post.objects\
+            .get_published # type: ignore
+    l.debug('Dados Coletados')
+    l.debug('Iniciando Paginator')
+    paginator = Paginator(posts, PER_PAGE) # type: ignore
+    l.debug('Coletando numero da pagina')
     page_number = request.GET.get("page")
+    l.debug('Retornando Objeto Paginado')
     page_obj = paginator.get_page(page_number)
+    l.debug('Renderizando pagina')
+
 
     return render(
         request,
@@ -19,10 +34,6 @@ def index(request:HttpRequest)->HttpResponse:
     )
 
 def page(request:HttpRequest)->HttpResponse:
-    paginator = Paginator(posts, 9)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
     return render(
         request,
         'blog/pages/page.html',
@@ -32,11 +43,10 @@ def page(request:HttpRequest)->HttpResponse:
     )
 
 
-def post(request:HttpRequest)->HttpResponse:
-    paginator = Paginator(posts, 9)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
+def post(request:HttpRequest,slug:str)->HttpResponse:
+    print('-'*80)
+    print(slug)
+   
     return render(
         request,
         'blog/pages/post.html',

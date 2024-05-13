@@ -6,10 +6,23 @@ from django.contrib.auth.models import User
 from utils.images import resize_image # type: ignore
 from utils.log import log
 
+class PostManager(models.Manager): # type: ignore
+    """Classe para substituir o objects da classe Post.
+    adicionando novos metodos ao objeto 'objects"""
+    @property
+    def get_published(self): # type: ignore
+        """Retorna os dados em que is_published = True ordenados por ID"""
+        return self\
+            .filter(is_published=True)\
+            .order_by('-pk')
+
 class Post(models.Model):
+    """Model para os Posts"""
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
+    
+    objects = PostManager()
     
     title = models.CharField(max_length=65,)
     #adicao de uma slig que é como se fosse uma url/id da Tag
