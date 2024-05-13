@@ -4,7 +4,7 @@ from blog.models.category_model import Category
 from utils.slug_rands import slugfy_new
 from django.contrib.auth.models import User
 from utils.images import resize_image # type: ignore
-
+from utils.log import log
 
 class Post(models.Model):
     class Meta:
@@ -77,6 +77,8 @@ class Post(models.Model):
     def save(self,*args, **kwargs): # type: ignore
         """Ao salvar, verifica que existe uma slug e caso nao tenha, cria e 
         salva o dado no model"""
+        l = log(__name__)
+        l.debug(f'Iniciando metodo save do model : { self.__class__.__name__} ',)
         if not self.slug:
             self.slug = slugfy_new(self.title)
         #redimencionar imagem da capa
@@ -85,11 +87,15 @@ class Post(models.Model):
         super().save(*args, **kwargs) # type: ignore
 
         if self.cover:
+            l.debug('Verificando se a imagem foi alterada')
             #verifica que o cover foi alterado
             cover_changed = current_cover_name != self.cover.name
 
         if cover_changed:
+            l.debug('Imagem alterada')
+            l.info('Redimensionando Imagem Enviada.')
             resize_image(self.cover, 900, True,70)
+            l.debug('Imagem redimensionada')
     
     def __str__(self) -> str:
         return self.title
