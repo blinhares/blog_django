@@ -3,6 +3,7 @@ from blog.models.tag_model import Tag
 from blog.models.category_model import Category
 from utils.slug_rands import slugfy_new
 from django.contrib.auth.models import User
+from utils.images import resize_image # type: ignore
 
 
 class Post(models.Model):
@@ -78,8 +79,17 @@ class Post(models.Model):
         salva o dado no model"""
         if not self.slug:
             self.slug = slugfy_new(self.title)
+        #redimencionar imagem da capa
+        cover_changed = False
+        current_cover_name = str(self.cover.name)
+        super().save(*args, **kwargs) # type: ignore
 
-        return super().save(*args, **kwargs) # type: ignore
+        if self.cover:
+            #verifica que o cover foi alterado
+            cover_changed = current_cover_name != self.cover.name
+
+        if cover_changed:
+            resize_image(self.cover, 900, True,70)
     
     def __str__(self) -> str:
         return self.title

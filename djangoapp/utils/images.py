@@ -5,7 +5,7 @@ from PIL import Image
 
 
 
-def resize_image(image_django, new_width=800, optimize=True, quality=60):
+def resize_image(image_django, new_width=800, optimize=True, quality=60) ->None:
     """Redimensiona imagem no endereco original da imagem, ou seja,
     dentro do caminho onde a imagem foi salva.
 

@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib import admin
 # from blog.models.tag_model import Tag
 # from djangoapp.blog.models.category_model import Category
@@ -51,4 +52,25 @@ class PostAdmin(admin.ModelAdmin): # type: ignore
         "slug": ('title',),
     }
     autocomplete_fields = 'tags', 'category',
+
+    def save_model(self, request: Any, obj: Any, form: Any, change: Any) -> None:
+        """_summary_
+        [documentation.](https://docs.djangoproject.com/en/5.0/ref/contrib/admin/#modeladmin-methods)
+        
+        Args:
+            request (Any): ...
+            obj (Any): ...
+            form (Any): ...
+            change (Any): bool que descreve se esta alterando ou criando . 
+            True para alterar
+
+        Returns:
+            None
+        """
+        if change:
+            obj.updated_by = request.user
+        else:
+            obj.created_by = request.user
+
+        return super().save_model(request, obj, form, change) # type: ignore
 
