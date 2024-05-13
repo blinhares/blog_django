@@ -4,6 +4,9 @@ from django.contrib import admin
 # from djangoapp.blog.models.category_model import Category
 # from djangoapp.blog.models.page_model import Page
 from blog.models import *
+#SummerNote
+from django_summernote.admin import SummernoteModelAdmin # type: ignore
+
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin): # type: ignore
@@ -28,7 +31,8 @@ class CategoryAdmin(admin.ModelAdmin): # type: ignore
         }
 
 @admin.register(Page)
-class PageAdmin(admin.ModelAdmin): # type: ignore
+class PageAdmin(SummernoteModelAdmin): # type: ignore
+    summernote_fields = 'content',
     list_display = 'id','title', 'slug','is_published',
     list_display_links = 'id','title'
     search_fields = list_display
@@ -39,7 +43,8 @@ class PageAdmin(admin.ModelAdmin): # type: ignore
         }
 
 @admin.register(Post)
-class PostAdmin(admin.ModelAdmin): # type: ignore
+class PostAdmin(SummernoteModelAdmin): # type: ignore
+    summernote_fields = 'content',
     list_display = 'id','title','is_published', 'created_by'
     list_display_links = 'id','title',
     search_fields = list_display
