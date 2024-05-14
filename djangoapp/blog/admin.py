@@ -1,8 +1,5 @@
 from typing import Any
 from django.contrib import admin
-# from blog.models.tag_model import Tag
-# from djangoapp.blog.models.category_model import Category
-# from djangoapp.blog.models.page_model import Page
 from blog.models import *
 #SummerNote
 from django_summernote.admin import SummernoteModelAdmin # type: ignore
