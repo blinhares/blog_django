@@ -5,6 +5,8 @@ from utils.slug_rands import slugfy_new
 from django.contrib.auth.models import User
 from utils.images import resize_image # type: ignore
 from utils.log import log
+from django.urls import reverse
+
 
 class PostManager(models.Manager): # type: ignore
     """Classe para substituir o objects da classe Post.
@@ -87,6 +89,21 @@ class Post(models.Model):
         default=''
     )
 
+    def get_absolute_url(self):
+        """Adiciona um botao 'Ver no Site' 
+        quando o model esta na area admins
+        Podemos substituir as urls do django pelo 
+        resultado deste medodo desta maneira:
+        href={{% url "blog:post" post.slug %}} - > href={{ post.get_absolute_url }}
+        """
+        if not self.is_published:
+            return reverse('blog:index')
+
+        return reverse(
+            'blog:post',
+            args=(self.slug,)
+        )
+    
     def save(self,*args, **kwargs): # type: ignore
         """Ao salvar, verifica que existe uma slug e caso nao tenha, cria e 
         salva o dado no model"""

@@ -12,6 +12,7 @@ def index(request:HttpRequest)->HttpResponse:
     """
     View Criado para Pagina de Index.
     """
+    l.debug('Run Index View...')
     l.debug('Coletando dados do Model Post')
     posts = Post.objects\
             .get_published # type: ignore
