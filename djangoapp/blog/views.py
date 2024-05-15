@@ -1,7 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from blog.models import Post
+from blog.models import Post, Page
 from utils.log import log
 from django.db.models import Q
 
@@ -35,9 +35,17 @@ def index(request:HttpRequest)->HttpResponse:
     )
 
 def page(request:HttpRequest,slug:str)->HttpResponse:
+    l.debug('Run page View...')
+    l.debug(f'Coletando publicações com slug :{slug}')
+    page = Page.objects.filter(is_published=True).\
+        filter(slug=slug).first() # type: ignore
+    
     return render(
         request,
         'blog/pages/page.html',
+        {
+            'page':page
+        }
         
     )
 

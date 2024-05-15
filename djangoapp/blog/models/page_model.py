@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from utils.slug_rands import slugfy_new
 
 class Page(models.Model):
@@ -22,6 +23,21 @@ class Page(models.Model):
         help_text='Este campo precisara estar marcado para a pagina seja exibida.'
     )
     content = models.TextField()
+
+    def get_absolute_url(self):
+        """Adiciona um botao 'Ver no Site' 
+        quando o model esta na area admins
+        Podemos substituir as urls do django pelo 
+        resultado deste medodo desta maneira:
+        href={{% url "blog:post" post.slug %}} - > href={{ post.get_absolute_url }}
+        """
+        if not self.is_published:
+            return reverse('blog:index')
+
+        return reverse(
+            'blog:page',
+            args=(self.slug,)
+        )
 
     def save(self,*args, **kwargs): # type: ignore
         """Ao salvar, verifica que existe uma slug e caso nao tenha, cria e 
