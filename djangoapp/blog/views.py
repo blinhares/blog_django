@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from blog.models import Post
 from utils.log import log
+from django.db.models import Q
 
 l = log(__name__)
 
@@ -128,5 +129,33 @@ def by_tag(request:HttpRequest,tag_slug:str)->HttpResponse:
         'blog/pages/index.html', #utilizando pagina de index
         {
             'page_obj': page_obj,
+        }
+    )
+
+def search(request:HttpRequest)->HttpResponse:
+    """
+    View Criado para Pesquisas
+    """
+    l.debug('Run search View...')
+    l.debug('Coletando o valor da busca no formulario de nome "search"...')
+    
+    search_value = request.GET.get('search','').strip()
+
+    l.debug(f'Coletando publicaçõe que contenha o valor buscado ({search_value})')
+
+    posts = Post.objects\
+            .get_published.filter( # type: ignore
+                Q(title__icontains = search_value)| #Q adiciona um `and` a query
+                Q(excerpt__icontains = search_value)|
+                Q(content__icontains = search_value)
+                )[:PER_PAGE] #devolve somente um numero limitado de paginas
+    l.debug('Dados Coletados')
+    
+    return render(
+        request,
+        'blog/pages/index.html', #utilizando pagina de index
+        {
+            'page_obj': posts,
+            'search_value':search_value
         }
     )
