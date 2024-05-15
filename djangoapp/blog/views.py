@@ -7,7 +7,7 @@ from blog.models import Post, Page
 from utils.log import log
 from django.db.models import Q
 from django.contrib.auth.models import User
-from django.views.generic import ListView
+from django.views.generic import ListView,DetailView
 
 l = log(__name__)
 
@@ -36,41 +36,39 @@ class PostListView(ListView):
         context.update({'page_title':'Home - ',})
         return context
 
+class PageDetailView(DetailView):
+    template_name = 'blog/pages/page.html'
+    model = Page
+    #https://docs.djangoproject.com/en/5.0/ref/class-based-views/mixins-single-object/#django.views.generic.detail.SingleObjectMixin.slug_field
+    slug_field = 'slug' 
 
-def page(request:HttpRequest,slug:str)->HttpResponse:
-    l.debug('Run page View...')
-    l.debug(f'Coletando publicações com slug :{slug}')
-    page = Page.objects.filter(is_published=True).\
-        filter(slug=slug).first() # type: ignore
-    if page is None:
-        raise Http404()
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset().filter(is_published=True)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        page = self.get_object()
+        ctx.update({
+            'page_title':f'{page.title} - ' # type: ignore
+        })
+        return ctx
+
+class PostDetailView(DetailView):
+    template_name = 'blog/pages/post.html'
+    model = Post
+    context_object_name = 'post'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset().filter(is_published=True)
     
-    return render(
-        request,
-        'blog/pages/page.html',
-        {
-            'page':page,
-            'page_title':f'{page.title} - '
-        }
-        
-    )
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        post = self.get_object()
+        ctx.update({
+            'page_title':f'{post.title} - ' # type: ignore
+        })
+        return ctx
 
-
-def post(request:HttpRequest,post_slug:str)->HttpResponse:
-    l.debug('Run post View...')
-    l.debug(f'Coletando publicações com slug :{post_slug}')
-    post_obj = Post.objects.get_published.filter(slug=post_slug).first() # type: ignore
-    if post_obj is None:
-        raise Http404()
-            
-    return render(
-        request,
-        'blog/pages/post.html',
-        {
-            'post':post_obj,
-            'page_title':f'{post_obj.title} - '
-        },
-    )
 
 class CreatedBy(PostListView):
     def __init__(self, **kwargs: Any) -> None:
@@ -185,32 +183,3 @@ class SearchListVIew(PostListView):
             return redirect('blog:index')
 
         return super().get(request, *args, **kwargs)
-
-def search(request:HttpRequest)->HttpResponse:
-    """
-    View Criado para Pesquisas
-    """
-    l.debug('Run search View...')
-    l.debug('Coletando o valor da busca no formulario de nome "search"...')
-    
-    search_value = request.GET.get('search','').strip()
-
-    l.debug(f'Coletando publicaçõe que contenha o valor buscado ({search_value})')
-
-    posts = Post.objects\
-            .get_published.filter( # type: ignore
-                Q(title__icontains = search_value)| #Q adiciona um `and` a query
-                Q(excerpt__icontains = search_value)|
-                Q(content__icontains = search_value)
-                )[:PER_PAGE] #devolve somente um numero limitado de paginas
-    l.debug('Dados Coletados')
-    
-    return render(
-        request,
-        'blog/pages/index.html', #utilizando pagina de index
-        {
-            'page_obj': posts,
-            'search_value':search_value,
-            'page_title':f'Search : {search_value[:10]}... - '
-        }
-    )
