@@ -1,11 +1,15 @@
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from blog.models import Post, Page
 from utils.log import log
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 l = log(__name__)
+
+#Classe Base View - https://docs.djangoproject.com/en/5.0/topics/class-based-views/
+
 
 PER_PAGE = 9
 # Create your views here.
@@ -31,6 +35,7 @@ def index(request:HttpRequest)->HttpResponse:
         'blog/pages/index.html',
         {
             'page_obj': page_obj,
+            'page_title':'Home - '
         }
     )
 
@@ -39,12 +44,15 @@ def page(request:HttpRequest,slug:str)->HttpResponse:
     l.debug(f'Coletando publicações com slug :{slug}')
     page = Page.objects.filter(is_published=True).\
         filter(slug=slug).first() # type: ignore
+    if page is None:
+        raise Http404()
     
     return render(
         request,
         'blog/pages/page.html',
         {
-            'page':page
+            'page':page,
+            'page_title':f'{page.title} - '
         }
         
     )
@@ -53,13 +61,16 @@ def page(request:HttpRequest,slug:str)->HttpResponse:
 def post(request:HttpRequest,post_slug:str)->HttpResponse:
     l.debug('Run post View...')
     l.debug(f'Coletando publicações com slug :{post_slug}')
-    post = Post.objects.get_published.filter(slug=post_slug).first() # type: ignore
+    post_obj = Post.objects.get_published.filter(slug=post_slug).first() # type: ignore
+    if post_obj is None:
+        raise Http404()
             
     return render(
         request,
-        'blog/pages/post.html',
+        'blog/pages/post_obj.html',
         {
-            'post':post,
+            'post_obj':post_obj,
+            'page_title':f'{post_obj.title} - '
         },
     )
 
@@ -68,6 +79,15 @@ def created_by(request:HttpRequest,user_id:str)->HttpResponse:
     View Criado para Pagina do Author
     """
     l.debug('Run created_by View...')
+    user = User.objects.filter(pk=user_id).first()
+    if user is None:
+        raise Http404('Usuario Inexistente!')
+    
+    if user.first_name:
+        user_name = f'{user.first_name} {user.last_name}'
+    else:
+        user_name = user
+
     l.debug(f'Coletando publicações do user_id:{user_id}')
     posts = Post.objects\
             .get_published.filter(created_by__pk = user_id) # type: ignore
@@ -85,6 +105,7 @@ def created_by(request:HttpRequest,user_id:str)->HttpResponse:
         'blog/pages/index.html', #utilizando pagina de index
         {
             'page_obj': page_obj,
+            'page_title':f'By: {user_name} - '
         }
     )
 
@@ -97,6 +118,9 @@ def by_category(request:HttpRequest,category_slug:str)->HttpResponse:
     posts = Post.objects\
             .get_published.filter(category__slug = category_slug) # type: ignore
     ## __ é usado para buscar dados dentro de um tabela forang key
+    if len(posts) == 0:
+        raise Http404()
+    
     l.debug('Dados Coletados')
     l.debug('Iniciando Paginator')
     paginator = Paginator(posts, PER_PAGE) # type: ignore
@@ -111,6 +135,7 @@ def by_category(request:HttpRequest,category_slug:str)->HttpResponse:
         'blog/pages/index.html', #utilizando pagina de index
         {
             'page_obj': page_obj,
+            'page_title':f'Category : {page_obj[0].category.name} - '
         }
     )
 
@@ -137,6 +162,7 @@ def by_tag(request:HttpRequest,tag_slug:str)->HttpResponse:
         'blog/pages/index.html', #utilizando pagina de index
         {
             'page_obj': page_obj,
+            'page_title':f'By Tag : {tag_slug} - '
         }
     )
 
@@ -164,6 +190,7 @@ def search(request:HttpRequest)->HttpResponse:
         'blog/pages/index.html', #utilizando pagina de index
         {
             'page_obj': posts,
-            'search_value':search_value
+            'search_value':search_value,
+            'page_title':f'Search : {search_value[:10]}... - '
         }
     )
