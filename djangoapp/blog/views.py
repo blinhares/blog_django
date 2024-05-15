@@ -1,7 +1,7 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
 from blog.models import Post, Page
 from utils.log import log
@@ -156,6 +156,35 @@ def by_tag(request:HttpRequest,tag_slug:str)->HttpResponse:
             'page_title':f'By Tag : {tag_slug} - '
         }
     )
+
+class SearchListVIew(PostListView):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._search_value = ''
+
+    def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
+        self._search_value = request.GET.get('search','').strip()
+
+        return super().setup(request, *args, **kwargs)
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset().filter( # type: ignore
+                Q(title__icontains = self._search_value)| #Q adiciona um `and` a query
+                Q(excerpt__icontains = self._search_value)|
+                Q(content__icontains = self._search_value)
+                )[:PER_PAGE]
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        ctx.update({
+            'search_value':self._search_value,
+            'page_title':f'Search : {self._search_value[:10]}... - '
+        })
+        return ctx
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if self._search_value == '':
+            return redirect('blog:index')
+
+        return super().get(request, *args, **kwargs)
 
 def search(request:HttpRequest)->HttpResponse:
     """
