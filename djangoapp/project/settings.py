@@ -57,7 +57,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', #witenoise to deploy on railway
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -177,17 +176,3 @@ SUMMERNOTE_CONFIG = {
     'attachment_filesize_limit': 30 * 1024 * 1024,
     'attachment_model': 'blog.PostAttachment',
 }
-
-
- #witenoise to deploy on railway
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-STATIC_URL = 'static/'
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-]
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-ALLOWED_HOSTS = ['*']
