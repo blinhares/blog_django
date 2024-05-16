@@ -12,6 +12,7 @@ pillow = "^10.3.0"
 psycopg2-binary = "^2.9.9"
 python-dotenv = "^1.0.1"
 django-summernote = "^0.8.20.0"
+django-axes = "^6.4.0"
 
 
 [build-system]

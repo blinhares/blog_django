@@ -56,6 +56,23 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-axes"
+version = "6.4.0"
+description = "Keep track of failed login attempts in Django-powered sites."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-axes-6.4.0.tar.gz", hash = "sha256:aff0e853ae9cddbdd9e8dc703b46915a9960012dab602552f61b43c0777bc731"},
+    {file = "django_axes-6.4.0-py3-none-any.whl", hash = "sha256:70508d108abc19bcfdd3e9ef7c9d526a014029a8e2ba51f03a5a8348d6eca1b9"},
+]
+
+[package.dependencies]
+django = ">=3.2"
+
+[package.extras]
+ipware = ["django-ipware (>=3)"]
+
+[[package]]
 name = "django-summernote"
 version = "0.8.20.0"
 description = "Summernote plugin for Django"
@@ -315,4 +332,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "34c15ba109ac25af59ae41f093d9ef05cc27703953c6411b2291d2c4b02a6850"
+content-hash = "dc394cecddaaea09712caf5cd1065896243f88ae517601b35cc259af31d5d54c"
