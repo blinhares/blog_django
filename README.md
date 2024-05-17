@@ -1,9 +1,54 @@
-# Criando um sistema de Blog em Django.
+# Criando um Sistema de Blog em Django
 
 ## Recursos
 
 - Docker como PosteGress DB;
-- Docker com Python (Django e Dependencias);
+- Docker com Python (Django e Dependências);
+
+## Como Rodar Localmente
+
+Certifique-se de ter instalado na sua máquina o `Docker` e o `Python`.
+Nos arquivos deste repositório você ira encontrar arquivos de configuração do poetry, fique liver para utiliza-los. Na explicação abaixo, nos vamos ignora-los.
+
+### Clonar o Repositório
+
+```bash
+git clone https://github.com/blinhares/blog_django.git
+```
+
+### Instalar dependências (opcional)
+
+Como as bibliotecas estarão instaladas no nosso docker, nao se faz necessário a instalação das libs no seu python local.
+
+```bash
+pip install blog_django/djangoapp/requirements.txt 
+```
+
+### Variáveis de ambiente
+
+Para isso vamos trabalhar com arquivos do tipo `.env` na pasta `blog_django/dotenv_files`.
+Nessa pasta há um arquivo de exemplo e o modelo exato utilizado neste projeto.
+Fique livre para altera-lo. 
+Para facilitar, vamos utilizar o mesmo arquivo ja existente, para isso simplesmente renomeamos o arquivo `.env_utilizado_projeto` para `.env`.
+
+### Buildando Suas Imagens
+
+Para dar start ao projeto, vamos construir nosso contêiner através do arquivo `docker-compose.yml` dentro de `/blog_django`.
+
+```bash
+sudo docker compose up --build 
+```
+
+Se tudo for bem, agora voce deve ter dois conteiners rodando em sua maquina. Para verificar basta executar o comando abaixo:
+
+```bash
+docker ps -a
+```
+
+A essa altura o projeto ja deve estar rodando no seu endereço local [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+### Criar Django Admin
+
 
 ## Comando Uteis
 
@@ -35,7 +80,7 @@ sudo docker compose down
 
 ```
 
-### Executar comando dentro do conteiner
+### Executar comando dentro do Conteiner
 
 
 Com o conteiner rodando, faça:
