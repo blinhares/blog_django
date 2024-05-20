@@ -28,8 +28,10 @@ pip install blog_django/djangoapp/requirements.txt
 
 Para isso vamos trabalhar com arquivos do tipo `.env` na pasta `blog_django/dotenv_files`.
 Nessa pasta há um arquivo de exemplo e o modelo exato utilizado neste projeto.
-Fique livre para altera-lo. 
+Fique livre para altera-lo.
 Para facilitar, vamos utilizar o mesmo arquivo ja existente, para isso simplesmente renomeamos o arquivo `.env_utilizado_projeto` para `.env`.
+
+#### Atenção, o sistema operacional pode ocultar os arquivos então certifique-se de que a opção para exibir arquivos ocultos esteja habilitada.
 
 ### Buildando Suas Imagens
 
@@ -39,7 +41,7 @@ Para dar start ao projeto, vamos construir nosso contêiner através do arquivo 
 sudo docker compose up --build 
 ```
 
-Se tudo for bem, agora voce deve ter dois conteiners rodando em sua maquina. Para verificar basta executar o comando abaixo:
+Se tudo for bem, agora voce deve ter dois conteiners rodando em sua maquina. E seu terminal deve mostrar isso, pois acabamos de criar conteiners em modo verboso. Para verificar basta executar o comando abaixo:
 
 ```bash
 docker ps -a
@@ -49,39 +51,54 @@ A essa altura o projeto ja deve estar rodando no seu endereço local [http://127
 
 ### Criar Django Admin
 
+Para criar um usuário vc deve executa o comando dentro do conteiner criado. Para isso vamo o usar o seguinte comando:
 
-## Comando Uteis
+```bash
+sudo docker compose up --build 
+```
 
-### Para Buildar os Conteiners
+Apos isso:
+
+```bash
+/djangoapp /# python manage.py createsuperuser
+
+```
+
+Crie seu usuario e apos isso vc tera acessoa a area administrativa do blog no endereço : [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin).
+
+Agora voçe pode criar publicações no site.
+
+### Comando Uteis
+
+#### Para Buildar os Conteiners
 
 ```bash
 sudo docker compose up --build --force-recreate
 
 ```
 
-### Para Rodar o Conteiner
+#### Para Rodar o Conteiner
 
 ```bash
 sudo docker compose up
 
 ```
 
-### Para Rodar o Conteiner em Silencio
+#### Para Rodar o Conteiner em Silencio
 
 ```bash
 sudo docker compose up -d
 
 ```
 
-### Para Desligar o Conteiner
+#### Para Desligar o Conteiner
 
 ```bash
 sudo docker compose down
 
 ```
 
-### Executar comando dentro do Conteiner
-
+#### Executar comando dentro do Conteiner
 
 Com o conteiner rodando, faça:
 
@@ -107,7 +124,7 @@ resulta em:
 Python 3.12.3
 ```
 
-### Executando o comando no Shell
+#### Executando o comando no Shell
 
 ```Bash
 docker compose run --rm djangoapp sh -c '<comando'
@@ -119,20 +136,9 @@ Ex.:
 docker compose run --rm djangoapp sh -c 'echo  ola'
 ```
 
-### Executando o Terminal de Modo interativo
+#### Executando o Terminal de Modo interativo
 
 ```bash
 docker exec -it djangoapp sh
 ```
 
-## Como utilizar
-
-### Criar um super User
-
-Execute dentro do conteiner o seguinte comando:
-
-```bash
-python manage.py createsuperuser
-```
-
-Crie um super usuario para voce.
